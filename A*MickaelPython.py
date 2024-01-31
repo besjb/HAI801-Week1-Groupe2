@@ -8,7 +8,7 @@ class Graph:
     def get_neighbors(self, v):
         return self.adjacency_list[v]
 
-    # heuristic function with equal values for all nodes
+    # heuristic
     def h(self, n):
         H = {
             'A': 9,
@@ -24,17 +24,10 @@ class Graph:
         return H[n]
 
     def a_star_algorithm(self, start_node, stop_node):
-        # open_list is a list of nodes which have been visited, but who's neighbors
-        # haven't all been inspected, starts off with the start node
-        # closed_list is a list of nodes which have been visited
-        # and who's neighbors have been inspected
-        open_list = set([start_node])
-        closed_list = set([])
+        open_list = set([start_node]) # List of nodes visited who's neighbours haven't been visited
+        closed_list = set([]) # List of nodes already visited and neighbours been visited
 
-        # g contains current distances from start_node to all other nodes
-        # the default value (if it's not found in the map) is +infinity
-        g = {}
-
+        g = {} # Distance
         g[start_node] = 0
 
         # parents contains an adjacency map of all nodes
@@ -43,18 +36,16 @@ class Graph:
 
         while len(open_list) > 0:
             n = None
-
-            # find a node with the lowest value of f() - evaluation function
+            # find a node with the lowest value of f()
             for v in open_list:
                 if n == None or g[v] + self.h(v) < g[n] + self.h(n):
-                    n = v;
-
+                    n = v
+            
+            # No node found
             if n == None:
                 print('Path does not exist!')
                 return None
 
-            # if the current node is the stop_node
-            # then we begin reconstructin the path from it to the start_node
             if n == stop_node:
                 reconst_path = []
 
@@ -63,7 +54,6 @@ class Graph:
                     n = parents[n]
 
                 reconst_path.append(start_node)
-
                 reconst_path.reverse()
 
                 print('Path found: {}'.format(reconst_path))
@@ -78,9 +68,6 @@ class Graph:
                     parents[m] = n
                     g[m] = g[n] + weight
 
-                # otherwise, check if it's quicker to first visit n, then m
-                # and if it is, update parent data and g data
-                # and if the node was in the closed_list, move it to open_list
                 else:
                     if g[m] > g[n] + weight:
                         g[m] = g[n] + weight
@@ -91,7 +78,6 @@ class Graph:
                             open_list.add(m)
 
             # remove n from the open_list, and add it to closed_list
-            # because all of his neighbors were inspected
             open_list.remove(n)
             closed_list.add(n)
 
@@ -100,7 +86,7 @@ class Graph:
 
 def main():
 
-    # Exemple Arthur
+    # Nodes
     adjacency_list = {
     'A': [('B', 2), ('C', 10), ('D', 3)],
     'B': [('E', 8), ('A', 2)],

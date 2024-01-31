@@ -7,7 +7,7 @@ class Graph {
         return this.adjacencyList[v];
     }
 
-    // heuristic function with equal values for all nodes
+    // heuristic
     h(n) {
         const H = {
             'A': 9,
@@ -59,7 +59,6 @@ class Graph {
                 }
 
                 reconstPath.push(startNode);
-
                 reconstPath.reverse();
 
                 console.log('Path found: ' + reconstPath);
@@ -95,6 +94,7 @@ class Graph {
 }
 
 function main() {
+    // Nodes
     const adjacencyList = {
         'A': [['B', 2], ['C', 10], ['D', 3]],
         'B': [['E', 8], ['A', 2]],
