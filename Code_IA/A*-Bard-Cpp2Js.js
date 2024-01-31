@@ -33,7 +33,7 @@ function main() {
   }
 
   // Initialisation de la liste ouverte
-  const openList = [nodes['A']];
+  const openList = [];
 
   // Initialisation de la liste fermée
   const closedList = [];
@@ -41,8 +41,12 @@ function main() {
   // Boucle principale
   while (openList.length) {
     // Récupération du nœud le plus prometteur
-    const current = openList[0];
-    openList.splice(0, 1);
+    if (openList.length) {
+      const current = openList[0]; // Initialize current to the first element in openList
+      openList.splice(0, 1);
+    } else {
+      break; // If openList is empty, there is no solution
+    }
 
     // Vérification si le nœud est le but
     if (current.name === 'H') {
@@ -64,12 +68,12 @@ function main() {
       const estimatedCost = current.cost + current.heuristic + neighbor.heuristic;
 
       // Si le nœud n'est pas dans la liste ouverte ou que son coût estimé est inférieur
-      if (openList.find(const_iterator(neighbor)) === openList.length - 1 || estimatedCost < neighbor.cost) {
+      if (closedList.indexOf(neighbor) === -1 || estimatedCost < neighbor.cost) {
         neighbor.cost = estimatedCost;
         neighbor.parent = current;
 
         // Ajout du nœud à la liste ouverte
-        openList.push(const_iterator(neighbor));
+        openList.push(neighbor);
       }
     }
   }
