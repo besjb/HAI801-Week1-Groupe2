@@ -5,11 +5,11 @@
 #include <functional>
 
 struct Node {
-    int id;     // Identifiant du nœud
-    int g;      // Coût actuel depuis le point de départ
-    int h;      // Heuristique (estimation du coût restant jusqu'à l'arrivée)
-    Node* parent; // Pointeur vers le nœud parent pour reconstruire le chemin
-    std::vector<std::pair<int, int>> neighbors; // Liste des voisins avec le poids de l'arête
+    int id;
+    int g;
+    int h;
+    Node* parent; 
+    std::vector<std::pair<int, int>> neighbors;
 
     Node(int id, int g, Node* parent, int heuristic)
         : id(id), g(g), h(heuristic), parent(parent) {}
@@ -28,18 +28,14 @@ struct CompareNode {
 
 class Graph {
 public:
-    // Ajouter un nœud au graphe avec une heuristique spécifique
     void addNode(int id, int heuristic) {
         nodes[id] = new Node(id, 0, nullptr, heuristic);
     }
-
-    // Ajouter une arête pondérée entre deux nœuds
     void addEdge(int from, int to, int weight) {
         nodes[from]->neighbors.push_back(std::make_pair(to, weight));
         nodes[to]->neighbors.push_back(std::make_pair(from, weight));
     }
 
-    // Exécuter l'algorithme A* pour trouver le chemin optimal entre deux nœuds
     std::vector<Node*> aStar(int startId, int goalId) {
         std::vector<Node*> openSet;
         std::unordered_map<int, Node*> closedSet;
@@ -53,7 +49,6 @@ public:
             openSet.pop_back();
 
             if (current->id == goalId) {
-                // Chemin trouvé, reconstruction
                 std::vector<Node*> path;
                 while (current != nullptr) {
                     path.push_back(current);
@@ -65,28 +60,24 @@ public:
 
             closedSet[current->id] = current;
 
-            // Générer les voisins
             for (const auto& neighbor : current->neighbors) {
                 int neighborId = neighbor.first;
                 int edgeWeight = neighbor.second;
 
                 if (closedSet.find(neighborId) != closedSet.end()) {
-                    continue;  // Ignore les nœuds déjà visités
+                    continue;
                 }
 
                 int tentative_g = current->g + edgeWeight;
                 Node* neighborNode = nodes[neighborId];
 
-                // Vérifier s'il est dans la liste ouverte
                 auto itOpen = std::find_if(openSet.begin(), openSet.end(), [neighborId](const Node* node) {
                     return node->id == neighborId;
                 });
 
                 if (itOpen == openSet.end() || tentative_g < (*itOpen)->g) {
-                    // Mettre à jour ou ajouter à la liste ouverte
                     neighborNode->parent = current;
                     neighborNode->g = tentative_g;
-                    //neighborNode->h = current->heuristic;
                     if (itOpen == openSet.end()) {
                         openSet.push_back(neighborNode);
                     }
@@ -94,8 +85,6 @@ public:
                 }
             }
         }
-
-        // Aucun chemin trouvé
         return std::vector<Node*>();
     }
 
@@ -103,15 +92,10 @@ private:
     std::unordered_map<int, Node*> nodes;
 };
 
-// Exemple d'heuristique personnalisée (distance euclidienne entre les nœuds)
-int customHeuristic(int current, int goal) {
-    return std::abs(current - goal);
-}
-
 int main() {
     Graph graph;
 
-    // Ajouter des nœuds avec des heuristiques spécifiques
+    /*===Nodes===*/
     graph.addNode(0, 9);
     graph.addNode(1, 3);
     graph.addNode(2, 4);
@@ -121,7 +105,7 @@ int main() {
     graph.addNode(6, 2);
     graph.addNode(7, 0);
 
-    // Ajouter des arêtes pondérées
+    /*===Edges===*/
     graph.addEdge(0, 1, 2);
     graph.addEdge(0, 3, 3);
     graph.addEdge(0, 2, 10);
@@ -140,8 +124,7 @@ int main() {
     graph.addEdge(5, 6, 5);
 
     graph.addEdge(6, 7, 2);
-
-    // Exécuter A* avec des heuristiques personnalisées
+    
     int startId = 0;
     int goalId = 7;
     std::vector<Node*> path = graph.aStar(startId, goalId);
